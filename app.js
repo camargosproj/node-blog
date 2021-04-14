@@ -38,6 +38,7 @@ app.get('/addblog', (req, res) => {
     });
     res.render('models/blog', { blog: blog });
     /*
+    This's the part of the code that isnt working 
     blog.save()
        .then((result) => {
             res.send(result);
