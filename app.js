@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const blog = require('./models/blog');
+const Blog = require('./models/blog');
 
 
 //Express app
@@ -31,32 +31,54 @@ app.use(morgan('dev'));
 
 //mongoose and mongo sandbox routes
 app.get('/addblog', (req, res) => {
-        blog = new Blog({
-        title: 'First blog',
+        const blog = new Blog({
+        title: 'Another blog',
         snippet: 'about my new blog',
         body: 'This is just my first blog'
     });
-    res.render('models/blog', { blog: blog });
-    /*
-    This's the part of the code that isnt working 
     blog.save()
        .then((result) => {
             res.send(result);
         })
         .catch((err) => {
             console.log('An error ocurred');
-        });*/
+        });
+});
+app.get("/all-blogs", (req, res) =>{
+    Blog.find()
+        .then((result) => {
+            res.send(result);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 });
 
+app.get("/single-blog", (req, res) =>{
+    Blog.findById('6078e46091024748c4cf5e72')
+        .then((result) => {
+            res.send(result);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+//routes
 app.get('/', (req, res) => {
-    const blogs = [
-        {title: "Lorem ipsum", snippet: "Lorem ipsum ipsum ipsum"},
-        {title: "Lorem ipsum", snippet: "loger helpa ipsum ipsum"},
-        {title: "Jack Viatam", snippet: "Lorem ipsum ipsum ipsum"},
-    ];
-    res.render('index', { title: 'Home', blogs});
+    res.redirect('/blogs');
 });
 
+// All blogs routes
+
+app.get('/blogs', (req, res) => {
+    Blog.find().sort({ createdAt: -1})
+        .then((result) => {
+            res.render('index', {title : 'All Blogs', blogs: result});
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
 
 app.get('/about', (req, res) => {
     res.render('about', { title: 'About'});
