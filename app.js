@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 
 //Middleware and static files
 app.use(express.static('public'));
-
+app.use(express.urlencoded({ extended: true}));
 app.use(morgan('dev'));
 
 //Listen for requests
@@ -80,13 +80,27 @@ app.get('/blogs', (req, res) => {
         });
 });
 
+app.post('/blogs', (req, res) =>{
+    const blog = Blog(req.body);
+    blog.save()
+        .then(() =>{
+            res.redirect('/blogs')
+        })
+        .catch((err) => {
+            console.log(err);
+
+        })
+})
+
+app.get('/blogs/create', (req, res) => {
+    res.render('create', { title: 'New Blog'});
+});
+
 app.get('/about', (req, res) => {
     res.render('about', { title: 'About'});
 
 });
-app.get('/blogs/create', (req, res) => {
-    res.render('create', { title: 'New Blog'});
-});
+
 
 
 // 404 Page
